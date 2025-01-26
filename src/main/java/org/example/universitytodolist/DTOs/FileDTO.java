@@ -1,5 +1,8 @@
 package org.example.universitytodolist.DTOs;
 
+import lombok.Data;
+
+@Data
 public class FileDTO {
     private Long id;
 
