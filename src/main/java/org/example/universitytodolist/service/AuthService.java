@@ -4,7 +4,9 @@ package org.example.universitytodolist.service;
 import org.example.universitytodolist.DTOs.RegistrationRequestDTO;
 import org.example.universitytodolist.DTOs.UserDTO;
 import org.example.universitytodolist.mapper.UserMapper;
+import org.example.universitytodolist.model.GradeBook;
 import org.example.universitytodolist.model.User;
+import org.example.universitytodolist.repository.GradeBookRepository;
 import org.example.universitytodolist.repository.UserRepository;
 import org.example.universitytodolist.security.JwtTokenProvider;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,22 +24,28 @@ public class AuthService {
     private final UserMapper userMapper;
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationManager authenticationManager;
+    private final GradeBookRepository gradeBookRepository;
 
-    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, UserMapper userMapper, JwtTokenProvider jwtTokenProvider, AuthenticationManager authenticationManager) {
+    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, UserMapper userMapper, JwtTokenProvider jwtTokenProvider, AuthenticationManager authenticationManager, GradeBookRepository gradeBookRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.userMapper = userMapper;
         this.jwtTokenProvider = jwtTokenProvider;
         this.authenticationManager = authenticationManager;
+        this.gradeBookRepository = gradeBookRepository;
     }
 
     public UserDTO registerUser(RegistrationRequestDTO registrationRequestDTO) {
-
         User user = new User();
+        GradeBook gradeBook = new GradeBook();
+
         user.setUsername(registrationRequestDTO.getUsername());
         user.setPassword(passwordEncoder.encode(registrationRequestDTO.getPassword()));
         user.setEmail(registrationRequestDTO.getEmail());
         userRepository.save(user);
+
+        gradeBook.setUser(user);
+        gradeBookRepository.save(gradeBook);
 
         return userMapper.toDTO(user);
     }
