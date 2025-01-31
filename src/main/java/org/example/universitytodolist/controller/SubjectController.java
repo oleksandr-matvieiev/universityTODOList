@@ -3,6 +3,7 @@ package org.example.universitytodolist.controller;
 import org.example.universitytodolist.DTOs.CreateSubjectDTO;
 import org.example.universitytodolist.DTOs.SubjectDTO;
 import org.example.universitytodolist.service.SubjectService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,7 +21,7 @@ public class SubjectController {
     @PostMapping("/create")
     public ResponseEntity<SubjectDTO> createSubject(@RequestBody CreateSubjectDTO createSubjectDTO) {
         SubjectDTO subjectDTO = subjectService.addSubject(createSubjectDTO);
-        return ResponseEntity.ok(subjectDTO);
+        return new ResponseEntity<>(subjectDTO, HttpStatus.CREATED);
     }
 
     @GetMapping("/get-all")

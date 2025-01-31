@@ -22,8 +22,9 @@ public class TaskMapper {
         taskDTO.setUserId(task.getUser().getId());
         taskDTO.setGradeBookId(task.getGradeBook().getId());
         taskDTO.setCommentIds(MappingUtil.mapEntitiesToIds(task.getComments(), Comment::getId));
-        taskDTO.setNotificationId(task.getNotification().getId());
-
+        if (task.getNotification() != null) {
+            taskDTO.setNotificationId(task.getNotification().getId());
+        }
         return taskDTO;
     }
 
