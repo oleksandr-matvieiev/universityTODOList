@@ -7,6 +7,4 @@ public class CreateSubjectDTO {
     private String name;
 
     private String description;
-
-    private String username;
 }

@@ -28,8 +28,7 @@ public class SubjectService {
 
     public SubjectDTO addSubject(CreateSubjectDTO createSubjectDTO) {
         Subject subject = new Subject();
-        User user = userRepository.findByUsername(createSubjectDTO.getUsername())
-                .orElseThrow(() -> new RuntimeException("User Not Found"));
+        User user = authService.getCurrentUser();
 
 
         subject.setName(createSubjectDTO.getName());
