@@ -6,7 +6,9 @@ import org.example.universitytodolist.service.TaskService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -22,6 +24,12 @@ public class TaskController {
     public ResponseEntity<TaskDTO> createTask(@RequestBody TaskCreateDTO taskCreateDTO) {
         TaskDTO taskDTO = taskService.createTask(taskCreateDTO);
         return new ResponseEntity<>(taskDTO, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/{taskId}/upload")
+    public ResponseEntity<TaskDTO> uploadTask(@PathVariable("taskId") Long taskId, @RequestParam("file") MultipartFile file) throws IOException {
+        TaskDTO taskDTO = taskService.uploadTask(taskId, file);
+        return new ResponseEntity<>(taskDTO, HttpStatus.OK);
     }
 
     @GetMapping("/{subjectName}/get-all")

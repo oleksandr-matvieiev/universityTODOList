@@ -12,7 +12,14 @@ import org.example.universitytodolist.repository.GradeBookRepository;
 import org.example.universitytodolist.repository.SubjectRepository;
 import org.example.universitytodolist.repository.TaskRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,12 +31,17 @@ public class TaskService {
     private final SubjectRepository subjectRepository;
     private final GradeBookRepository gradeBookRepository;
 
+    private final String uploadDir = "uploads";
+
     public TaskService(TaskRepository taskRepository, TaskMapper taskMapper, AuthService authService, SubjectRepository subjectRepository, GradeBookRepository gradeBookRepository) {
         this.taskRepository = taskRepository;
         this.taskMapper = taskMapper;
         this.authService = authService;
         this.subjectRepository = subjectRepository;
         this.gradeBookRepository = gradeBookRepository;
+
+        File directory = new File(uploadDir);
+        if (!directory.exists()) directory.mkdirs();
     }
 
     public TaskDTO createTask(TaskCreateDTO taskCreateDTO) {
@@ -64,6 +76,25 @@ public class TaskService {
         List<Task> tasks = taskRepository.findAllBySubject_IdAndUser_Id(subject.getId(), user.getId());
 
         return tasks.stream().map(taskMapper::toDTO).collect(Collectors.toList());
+    }
+
+    public TaskDTO uploadTask(Long taskId, MultipartFile file) throws IOException {
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new RuntimeException("Task not found"));
+
+        User user = authService.getCurrentUser();
+        if (!task.getUser().equals(user)) {
+            throw new RuntimeException("Wrong user");
+        }
+
+        String filePath = uploadDir + "/" + file.getOriginalFilename();
+        Path path = Paths.get(filePath);
+        Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+
+        task.setStatus(TaskStatus.COMPLETED);
+        task.setUploadedFile(filePath);
+
+        return taskMapper.toDTO(taskRepository.save(task));
     }
 
 
