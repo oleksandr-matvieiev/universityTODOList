@@ -4,10 +4,8 @@ import org.example.universitytodolist.DTOs.TaskCreateDTO;
 import org.example.universitytodolist.DTOs.TaskDTO;
 import org.example.universitytodolist.enums.TaskStatus;
 import org.example.universitytodolist.mapper.TaskMapper;
-import org.example.universitytodolist.model.GradeBook;
-import org.example.universitytodolist.model.Subject;
-import org.example.universitytodolist.model.Task;
-import org.example.universitytodolist.model.User;
+import org.example.universitytodolist.model.*;
+import org.example.universitytodolist.repository.CommentRepository;
 import org.example.universitytodolist.repository.GradeBookRepository;
 import org.example.universitytodolist.repository.SubjectRepository;
 import org.example.universitytodolist.repository.TaskRepository;
@@ -20,6 +18,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,18 +26,23 @@ import java.util.stream.Collectors;
 public class TaskService {
     private final TaskRepository taskRepository;
     private final TaskMapper taskMapper;
+
     private final AuthService authService;
+
     private final SubjectRepository subjectRepository;
+
     private final GradeBookRepository gradeBookRepository;
 
+    private final CommentRepository commentRepository;
     private final String uploadDir = "uploads";
 
-    public TaskService(TaskRepository taskRepository, TaskMapper taskMapper, AuthService authService, SubjectRepository subjectRepository, GradeBookRepository gradeBookRepository) {
+    public TaskService(TaskRepository taskRepository, TaskMapper taskMapper, AuthService authService, SubjectRepository subjectRepository, GradeBookRepository gradeBookRepository, CommentRepository commentRepository) {
         this.taskRepository = taskRepository;
         this.taskMapper = taskMapper;
         this.authService = authService;
         this.subjectRepository = subjectRepository;
         this.gradeBookRepository = gradeBookRepository;
+        this.commentRepository = commentRepository;
 
         File directory = new File(uploadDir);
         if (!directory.exists()) directory.mkdirs();
@@ -94,6 +98,26 @@ public class TaskService {
         task.setStatus(TaskStatus.COMPLETED);
         task.setUploadedFile(filePath);
 
+        return taskMapper.toDTO(taskRepository.save(task));
+    }
+
+    public TaskDTO getTaskById(Long taskId) {
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new RuntimeException("Task not found"));
+        User user = authService.getCurrentUser();
+        if (!task.getUser().equals(user)) throw new RuntimeException("Wrong user");
+
+        return taskMapper.toDTO(task);
+    }
+
+    public TaskDTO giveGradeToTask(Long taskId, Integer mark) {
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new RuntimeException("Task not found"));
+        User user = authService.getCurrentUser();
+
+        if (!task.getUser().equals(user)) throw new RuntimeException("Wrong user");
+
+        task.setGrade(mark);
         return taskMapper.toDTO(taskRepository.save(task));
     }
 

@@ -32,9 +32,24 @@ public class TaskController {
         return new ResponseEntity<>(taskDTO, HttpStatus.OK);
     }
 
+    @PostMapping("/giveGrade/{taskId}")
+    public ResponseEntity<TaskDTO> giveGrade(@PathVariable("taskId") Long taskId, @RequestParam("grade") Integer grade) {
+        TaskDTO taskDTO = taskService.giveGradeToTask(taskId, grade);
+        return new ResponseEntity<>(taskDTO, HttpStatus.OK);
+    }
+
+
     @GetMapping("/{subjectName}/get-all")
     public ResponseEntity<List<TaskDTO>> getAllTasks(@PathVariable String subjectName) {
         List<TaskDTO> taskDTOS = taskService.getAllTasksForCurrentSubject(subjectName);
         return new ResponseEntity<>(taskDTOS, HttpStatus.OK);
     }
+
+    @GetMapping("/{taskId}")
+    public ResponseEntity<TaskDTO> getTask(@PathVariable("taskId") Long taskId) {
+        TaskDTO taskDTO = taskService.getTaskById(taskId);
+        return new ResponseEntity<>(taskDTO, HttpStatus.OK);
+    }
+
+
 }
