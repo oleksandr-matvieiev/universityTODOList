@@ -1,6 +1,8 @@
 package org.example.universitytodolist.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -30,6 +32,8 @@ public class Task {
 
     private String uploadedFile;
 
+    @Max(100)
+    @Min(0)
     private Integer grade;
 
     @ManyToOne
