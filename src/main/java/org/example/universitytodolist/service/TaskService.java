@@ -135,4 +135,11 @@ public class TaskService {
         commentRepository.save(comment);
         return taskMapper.toDTO(taskRepository.save(task));
     }
+
+    public List<TaskDTO> getTaskByStatus(TaskStatus status) {
+        User user = authService.getCurrentUser();
+        List<Task> tasks = taskRepository.findAllByStatusAndUser(status, user);
+
+        return tasks.stream().map(taskMapper::toDTO).collect(Collectors.toList());
+    }
 }

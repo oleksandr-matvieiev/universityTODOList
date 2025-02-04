@@ -16,13 +16,11 @@ import java.util.stream.Collectors;
 public class SubjectService {
     private final SubjectRepository subjectRepository;
     private final SubjectMapper subjectMapper;
-    private final UserRepository userRepository;
     private final AuthService authService;
 
-    public SubjectService(SubjectRepository subjectRepository, SubjectMapper subjectMapper, UserRepository userRepository, AuthService authService) {
+    public SubjectService(SubjectRepository subjectRepository, SubjectMapper subjectMapper, AuthService authService) {
         this.subjectRepository = subjectRepository;
         this.subjectMapper = subjectMapper;
-        this.userRepository = userRepository;
         this.authService = authService;
     }
 
