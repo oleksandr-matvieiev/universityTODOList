@@ -2,6 +2,7 @@ package org.example.universitytodolist.controller;
 
 import org.example.universitytodolist.DTOs.TaskCreateDTO;
 import org.example.universitytodolist.DTOs.TaskDTO;
+import org.example.universitytodolist.enums.TaskStatus;
 import org.example.universitytodolist.service.TaskService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -54,6 +55,12 @@ public class TaskController {
     public ResponseEntity<TaskDTO> getTask(@PathVariable("taskId") Long taskId) {
         TaskDTO taskDTO = taskService.getTaskById(taskId);
         return new ResponseEntity<>(taskDTO, HttpStatus.OK);
+    }
+
+    @GetMapping("/get-all/by-status/{status}")
+    public ResponseEntity<List<TaskDTO>> getAllTasksByStatus(@PathVariable("status") String status) {
+        List<TaskDTO> taskDTOS = taskService.getTaskByStatus(TaskStatus.valueOf(status));
+        return new ResponseEntity<>(taskDTOS, HttpStatus.OK);
     }
 
 
