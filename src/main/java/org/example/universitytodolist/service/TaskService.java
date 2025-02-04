@@ -79,6 +79,8 @@ public class TaskService {
 
         List<Task> tasks = taskRepository.findAllBySubject_IdAndUser_Id(subject.getId(), user.getId());
 
+        if (tasks.isEmpty()) throw new RuntimeException("Task not found");
+
         return tasks.stream().map(taskMapper::toDTO).collect(Collectors.toList());
     }
 
@@ -139,6 +141,8 @@ public class TaskService {
     public List<TaskDTO> getTaskByStatus(TaskStatus status) {
         User user = authService.getCurrentUser();
         List<Task> tasks = taskRepository.findAllByStatusAndUser(status, user);
+
+        if (tasks.isEmpty()) throw new RuntimeException("Task not found");
 
         return tasks.stream().map(taskMapper::toDTO).collect(Collectors.toList());
     }

@@ -39,6 +39,9 @@ public class SubjectService {
     public List<SubjectDTO> getAllSubjectsForCurrentUser() {
         User user = authService.getCurrentUser();
         List<Subject> subjects = user.getSubjects();
+
+        if (subjects.isEmpty()) throw new RuntimeException("Subject not found");
+
         return subjects.stream().map(subjectMapper::toDTO).collect(Collectors.toList());
     }
 
