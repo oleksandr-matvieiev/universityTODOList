@@ -121,5 +121,18 @@ public class TaskService {
         return taskMapper.toDTO(taskRepository.save(task));
     }
 
+    public TaskDTO commentTask(Long taskId, String content) {
+        Comment comment = new Comment();
+        User user = authService.getCurrentUser();
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new RuntimeException("Task not found"));
 
+        comment.setCreatedAt(LocalDateTime.now());
+        comment.setContent(content);
+        comment.setUser(user);
+        comment.setTask(task);
+
+        commentRepository.save(comment);
+        return taskMapper.toDTO(taskRepository.save(task));
+    }
 }

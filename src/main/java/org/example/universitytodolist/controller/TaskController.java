@@ -38,6 +38,11 @@ public class TaskController {
         return new ResponseEntity<>(taskDTO, HttpStatus.OK);
     }
 
+    @PostMapping("/{taskId}/comment")
+    public ResponseEntity<TaskDTO> commentTask(@PathVariable("taskId") Long taskId, @RequestParam("comment") String comment) {
+        TaskDTO taskDTO = taskService.commentTask(taskId, comment);
+        return new ResponseEntity<>(taskDTO, HttpStatus.OK);
+    }
 
     @GetMapping("/{subjectName}/get-all")
     public ResponseEntity<List<TaskDTO>> getAllTasks(@PathVariable String subjectName) {
