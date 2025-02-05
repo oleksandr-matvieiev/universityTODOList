@@ -9,6 +9,10 @@ import org.example.universitytodolist.repository.CommentRepository;
 import org.example.universitytodolist.repository.GradeBookRepository;
 import org.example.universitytodolist.repository.SubjectRepository;
 import org.example.universitytodolist.repository.TaskRepository;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -107,6 +111,31 @@ public class TaskService {
 
         return taskMapper.toDTO(taskRepository.save(task));
     }
+    public ResponseEntity<Resource> downloadTaskFile(Long taskId) {
+        Task task=taskRepository.findById(taskId)
+                .orElseThrow(() -> new RuntimeException("Task not found"));
+        User user = authService.getCurrentUser();
+        if (!task.getUser().equals(user)) throw new RuntimeException("Wrong user");
+
+        if (task.getUploadedFile()==null)  throw new RuntimeException("No file uploaded for this task");
+
+        try {
+            Path filePath=Paths.get(task.getUploadedFile());
+            Resource resource = new UrlResource(filePath.toUri());
+
+            if (resource.exists()){
+                return ResponseEntity.ok()
+                        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+                        .body(resource);
+            }else {
+                throw new RuntimeException("No file uploaded for this task");
+            }
+        }catch(Exception e){
+            throw new RuntimeException("Error downloading file", e);
+        }
+
+    }
+
 
     public TaskDTO getTaskById(Long taskId) {
         Task task = taskRepository.findById(taskId)

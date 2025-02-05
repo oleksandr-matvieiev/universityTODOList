@@ -4,6 +4,7 @@ import org.example.universitytodolist.DTOs.TaskCreateDTO;
 import org.example.universitytodolist.DTOs.TaskDTO;
 import org.example.universitytodolist.enums.TaskStatus;
 import org.example.universitytodolist.service.TaskService;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -61,6 +62,10 @@ public class TaskController {
     public ResponseEntity<List<TaskDTO>> getAllTasksByStatus(@PathVariable("status") String status) {
         List<TaskDTO> taskDTOS = taskService.getTaskByStatus(TaskStatus.valueOf(status));
         return new ResponseEntity<>(taskDTOS, HttpStatus.OK);
+    }
+    @GetMapping("/{taskId}/download")
+    public ResponseEntity<Resource> downloadTaskFile(@PathVariable Long taskId) {
+        return taskService.downloadTaskFile(taskId);
     }
 
 
