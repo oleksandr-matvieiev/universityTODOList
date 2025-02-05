@@ -18,6 +18,7 @@ public class TaskMapper {
         taskDTO.setStatus(task.getStatus());
         taskDTO.setUploadedFile(task.getUploadedFile());
         taskDTO.setGrade(task.getGrade());
+        taskDTO.setReminderSent(task.isReminderSent());
         taskDTO.setSubjectId(task.getSubject().getId());
         taskDTO.setUserId(task.getUser().getId());
         taskDTO.setGradeBookId(task.getGradeBook().getId());

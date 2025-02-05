@@ -22,6 +22,8 @@ public class TaskDTO {
 
     private Integer grade;
 
+    private boolean reminderSent = false;
+
     private Long subjectId;
 
     private Long userId;

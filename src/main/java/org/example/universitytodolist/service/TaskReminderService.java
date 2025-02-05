@@ -20,20 +20,24 @@ public class TaskReminderService {
         this.emailService = emailService;
     }
 
-    //    @Scheduled(cron = "0 0 10 * * ?")
-    @Scheduled(fixedRate = 5000)
+    @Scheduled(cron = "0 0 10 * * ?")
+//    @Scheduled(fixedRate = 5000)
     public void reminder() {
         LocalDateTime treeDayLater = LocalDateTime.now().plusDays(3);
         List<Task> tasks = taskRepository.findAllByDeadLineBetween(LocalDateTime.now(), treeDayLater);
 
         for (Task task : tasks) {
-            User user = task.getUser();
-            String subject = "\uD83D\uDD14 Reminder about deadline:" + task.getTitle();
-            String message = "Hi, " + user.getUsername() + "!<br><br>" +
-                    "We would like to inform you that the deadline for the task<b>" + task.getTitle() + "</b>" +
-                    " is approaching. You have <b>3 more days</b> to complete it.<br><br>" +
-                    "<i>Sincerely, UniversityToDoList</i>";
-            emailService.sendEmail(user.getEmail(), subject, message);
+            if (!task.isReminderSent()) {
+                User user = task.getUser();
+                String subject = "\uD83D\uDD14 Reminder about deadline:" + task.getTitle();
+                String message = "Hi, " + user.getUsername() + "!<br><br>" +
+                        "We would like to inform you that the deadline for the task<b>" + task.getTitle() + "</b>" +
+                        " is approaching. You have <b>3 more days</b> to complete it.<br><br>" +
+                        "<i>Sincerely, UniversityToDoList</i>";
+                emailService.sendEmail(user.getEmail(), subject, message);
+                task.setReminderSent(true);
+                taskRepository.save(task);
+            }
         }
         System.out.println("Reminder completed");
     }

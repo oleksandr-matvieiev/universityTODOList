@@ -36,6 +36,8 @@ public class Task {
     @Min(0)
     private Integer grade;
 
+    private boolean reminderSent = false;
+
     @ManyToOne
     @JoinColumn(name = "subject_id")
     private Subject subject;
