@@ -12,6 +12,8 @@ public class SubjectDTO {
 
     private String description;
 
+    private Integer averageGrade;
+
     private Long userId;
 
     private List<Long> taskIds;

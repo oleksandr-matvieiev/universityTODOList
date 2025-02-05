@@ -14,6 +14,7 @@ public class SubjectMapper {
         subjectDTO.setId(subject.getId());
         subjectDTO.setName(subject.getName());
         subjectDTO.setDescription(subject.getDescription());
+        subjectDTO.setAverageGrade(subject.getAverageGrade());
         subjectDTO.setUserId(subject.getUser().getId());
         subjectDTO.setTaskIds(MappingUtil.mapEntitiesToIds(subject.getTasks(), Task::getId));
 

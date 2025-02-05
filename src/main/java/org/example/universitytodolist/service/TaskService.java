@@ -111,26 +111,27 @@ public class TaskService {
 
         return taskMapper.toDTO(taskRepository.save(task));
     }
+
     public ResponseEntity<Resource> downloadTaskFile(Long taskId) {
-        Task task=taskRepository.findById(taskId)
+        Task task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new RuntimeException("Task not found"));
         User user = authService.getCurrentUser();
         if (!task.getUser().equals(user)) throw new RuntimeException("Wrong user");
 
-        if (task.getUploadedFile()==null)  throw new RuntimeException("No file uploaded for this task");
+        if (task.getUploadedFile() == null) throw new RuntimeException("No file uploaded for this task");
 
         try {
-            Path filePath=Paths.get(task.getUploadedFile());
+            Path filePath = Paths.get(task.getUploadedFile());
             Resource resource = new UrlResource(filePath.toUri());
 
-            if (resource.exists()){
+            if (resource.exists()) {
                 return ResponseEntity.ok()
                         .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
                         .body(resource);
-            }else {
+            } else {
                 throw new RuntimeException("No file uploaded for this task");
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             throw new RuntimeException("Error downloading file", e);
         }
 
@@ -150,7 +151,8 @@ public class TaskService {
         Task task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new RuntimeException("Task not found"));
         User user = authService.getCurrentUser();
-
+        Subject subject = task.getSubject();
+        subject.setAverageGrade(subject.getAverageGrade() + mark / subject.getTasks().size());
         if (!task.getUser().equals(user)) throw new RuntimeException("Wrong user");
 
         task.setGrade(mark);
