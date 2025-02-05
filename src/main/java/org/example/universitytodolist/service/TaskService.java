@@ -85,6 +85,11 @@ public class TaskService {
     }
 
     public TaskDTO uploadTask(Long taskId, MultipartFile file) throws IOException {
+        String fileName = file.getOriginalFilename();
+        if (fileName == null || !(fileName.endsWith(".pdf") || fileName.endsWith(".docx") || fileName.endsWith(".png"))) {
+            throw new RuntimeException("Invalid file type. Only PDF, DOCX, and PNG allowed.");
+        }
+
         Task task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new RuntimeException("Task not found"));
 
@@ -134,6 +139,7 @@ public class TaskService {
         comment.setUser(user);
         comment.setTask(task);
 
+        task.getComments().add(comment);
         commentRepository.save(comment);
         return taskMapper.toDTO(taskRepository.save(task));
     }
