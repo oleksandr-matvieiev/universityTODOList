@@ -1,14 +1,16 @@
-import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import {useEffect, useState} from "react";
+import {useParams, useNavigate} from "react-router-dom";
 import axios from "axios";
 
+import "./TaskPage.css";
+
 const TaskPage = () => {
-    const { subjectName } = useParams();
+    const {subjectName} = useParams();
     const [tasks, setTasks] = useState([]);
     const [filteredTasks, setFilteredTasks] = useState([]);
     const [statusFilter, setStatusFilter] = useState("");
     const [error, setError] = useState(null);
-    const [newTask, setNewTask] = useState({ title: "", description: "", deadLine: "" });
+    const [newTask, setNewTask] = useState({title: "", description: "", deadLine: ""});
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -25,7 +27,7 @@ const TaskPage = () => {
 
         try {
             const response = await axios.get(`http://localhost:8080/api/task/${encodeURIComponent(subjectName)}/get-all`, {
-                headers: { Authorization: `Bearer ${token}` }
+                headers: {Authorization: `Bearer ${token}`}
             });
 
             setTasks(response.data);
@@ -47,7 +49,7 @@ const TaskPage = () => {
         try {
             const token = localStorage.getItem("token");
             const response = await axios.get(`http://localhost:8080/api/task/get-all/by-status/${status}`, {
-                headers: { Authorization: `Bearer ${token}` }
+                headers: {Authorization: `Bearer ${token}`}
             });
 
             setFilteredTasks(response.data);
@@ -63,13 +65,13 @@ const TaskPage = () => {
             const token = localStorage.getItem("token");
             const response = await axios.post(
                 "http://localhost:8080/api/task/create",
-                { ...newTask, subjectName },
-                { headers: { Authorization: `Bearer ${token}` } }
+                {...newTask, subjectName},
+                {headers: {Authorization: `Bearer ${token}`}}
             );
 
             setTasks([...tasks, response.data]);
             setFilteredTasks([...filteredTasks, response.data]);
-            setNewTask({ title: "", description: "", deadLine: "" });
+            setNewTask({title: "", description: "", deadLine: ""});
         } catch (error) {
             console.error("Error while creating task:", error);
             setError("Error please try again!");
@@ -97,20 +99,20 @@ const TaskPage = () => {
                     type="text"
                     placeholder="Task name"
                     value={newTask.title}
-                    onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
+                    onChange={(e) => setNewTask({...newTask, title: e.target.value})}
                     required
                 />
                 <input
                     type="text"
                     placeholder="Task description"
                     value={newTask.description}
-                    onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
+                    onChange={(e) => setNewTask({...newTask, description: e.target.value})}
                     required
                 />
                 <input
                     type="datetime-local"
                     value={newTask.deadLine}
-                    onChange={(e) => setNewTask({ ...newTask, deadLine: e.target.value })}
+                    onChange={(e) => setNewTask({...newTask, deadLine: e.target.value})}
                     required
                 />
                 <button type="submit">Add new task</button>
