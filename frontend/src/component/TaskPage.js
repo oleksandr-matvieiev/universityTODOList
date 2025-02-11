@@ -3,6 +3,7 @@ import {useParams, useNavigate} from "react-router-dom";
 import axios from "axios";
 
 import "./TaskPage.css";
+import NavigationMenu from "./NavigationMenu";
 
 const TaskPage = () => {
     const {subjectName} = useParams();
