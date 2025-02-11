@@ -80,6 +80,7 @@ const TaskPage = () => {
 
     return (
         <div className="task-container">
+            <NavigationMenu />
             <h2>📝 Tasks for subject: {subjectName}</h2>
 
             {error && <p className="error">{error}</p>}

@@ -2,6 +2,7 @@ import {useState} from "react";
 import axios from "axios";
 
 import "./LoginPage.css";
+import NavigationMenu from "./NavigationMenu";
 
 const LoginPage = () => {
     const [username, setUsername] = useState("");
@@ -34,6 +35,7 @@ const LoginPage = () => {
     }
     return (
         <div className="login-container">
+            <NavigationMenu />
             <h2>Login</h2>
             {error && <p className="error">{error}</p>}
             <form onSubmit={handleLogin}>

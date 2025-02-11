@@ -3,6 +3,7 @@ import {useNavigate} from "react-router-dom";
 import axios from "axios";
 
 import "./HomePage.css";
+import NavigationMenu from "./NavigationMenu";
 
 const HomePage = () => {
     const [subjects, setSubjects] = useState([]);
@@ -68,6 +69,7 @@ const HomePage = () => {
 
     return (
         <div className="home-container">
+            <NavigationMenu />
             <h2>📚 My subjects</h2>
 
             {error && <p className="error">{error}</p>}

@@ -84,6 +84,7 @@ const TaskDetailPage = () => {
 
     return (
         <div className="task-detail-container">
+            <NavigationMenu />
             <h2>📌 {task.title}</h2>
             <p><strong>📖 Description:</strong> {task.description}</p>
             <p><strong>📅 Deadline:</strong> {task.deadLine ?? "No"}</p>
