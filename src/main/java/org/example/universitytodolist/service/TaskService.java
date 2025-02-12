@@ -183,4 +183,15 @@ public class TaskService {
 
         return tasks.stream().map(taskMapper::toDTO).collect(Collectors.toList());
     }
+
+    public TaskDTO changeTaskStatus(Long taskId, TaskStatus status) {
+        User user = authService.getCurrentUser();
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new RuntimeException("Task not found"));
+        if (task.getUser().equals(user)) {
+            task.setStatus(status);
+            taskRepository.save(task);
+        }
+        return taskMapper.toDTO(task);
+    }
 }

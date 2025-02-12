@@ -40,6 +40,12 @@ public class TaskController {
         return new ResponseEntity<>(taskDTO, HttpStatus.OK);
     }
 
+    @PostMapping("/changeStatus/{taskId}")
+    public ResponseEntity<TaskDTO> changeStatus(@PathVariable Long taskId, @RequestParam String taskStatus) {
+        TaskDTO taskDTO = taskService.changeTaskStatus(taskId, TaskStatus.valueOf(taskStatus));
+        return new ResponseEntity<>(taskDTO, HttpStatus.OK);
+    }
+
     @PostMapping("/{taskId}/comment")
     public ResponseEntity<TaskDTO> commentTask(@PathVariable("taskId") Long taskId, @RequestParam("comment") String comment) {
         TaskDTO taskDTO = taskService.commentTask(taskId, comment);
@@ -63,6 +69,7 @@ public class TaskController {
         List<TaskDTO> taskDTOS = taskService.getTaskByStatus(TaskStatus.valueOf(status));
         return new ResponseEntity<>(taskDTOS, HttpStatus.OK);
     }
+
     @GetMapping("/{taskId}/download")
     public ResponseEntity<Resource> downloadTaskFile(@PathVariable Long taskId) {
         return taskService.downloadTaskFile(taskId);
