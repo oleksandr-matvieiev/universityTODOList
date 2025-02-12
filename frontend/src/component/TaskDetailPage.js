@@ -1,13 +1,15 @@
-import {useEffect, useState} from "react";
-import {useParams} from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import axios from "axios";
 import NavigationMenu from "./NavigationMenu";
 
 const TaskDetailPage = () => {
-    const {taskId} = useParams();
+    const { taskId } = useParams();
     const [task, setTask] = useState(null);
     const [error, setError] = useState(null);
     const [file, setFile] = useState(null);
+    const [newStatus, setNewStatus] = useState("");
+    const [newGrade, setNewGrade] = useState("");
 
     useEffect(() => {
         fetchTaskDetails();
@@ -23,7 +25,7 @@ const TaskDetailPage = () => {
 
         try {
             const response = await axios.get(`http://localhost:8080/api/task/${taskId}`, {
-                headers: {Authorization: `Bearer ${token}`}
+                headers: { Authorization: `Bearer ${token}` }
             });
 
             setTask(response.data);
@@ -56,7 +58,7 @@ const TaskDetailPage = () => {
             fetchTaskDetails();
         } catch (error) {
             console.error("Error while upload file:", error);
-            setError("Error while download file! Please try again");
+            setError("Error while upload file! Please try again");
         }
     };
 
@@ -64,7 +66,7 @@ const TaskDetailPage = () => {
         try {
             const token = localStorage.getItem("token");
             const response = await axios.get(`http://localhost:8080/api/task/${taskId}/download`, {
-                headers: {Authorization: `Bearer ${token}`},
+                headers: { Authorization: `Bearer ${token}` },
                 responseType: "blob"
             });
 
@@ -77,6 +79,56 @@ const TaskDetailPage = () => {
         } catch (error) {
             console.error("Error while download file:", error);
             setError("Error while download file! Please try again");
+        }
+    };
+
+    const handleChangeStatus = async () => {
+        if (!newStatus) {
+            alert("Choose a status");
+            return;
+        }
+
+        try {
+            const token = localStorage.getItem("token");
+            await axios.post(
+                `http://localhost:8080/api/task/changeStatus/${taskId}`,
+                null,
+                {
+                    params: { taskStatus: newStatus },
+                    headers: { Authorization: `Bearer ${token}` }
+                }
+            );
+
+            alert("Status successfully updated!");
+            fetchTaskDetails();
+        } catch (error) {
+            console.error("Error while updating status:", error);
+            setError("Error while updating status! Please try again");
+        }
+    };
+
+    const handleGiveGrade = async () => {
+        if (!newGrade || isNaN(newGrade) || newGrade < 0 || newGrade > 100) {
+            alert("Enter a valid grade (0-100)");
+            return;
+        }
+
+        try {
+            const token = localStorage.getItem("token");
+            await axios.post(
+                `http://localhost:8080/api/task/giveGrade/${taskId}`,
+                null,
+                {
+                    params: { grade: newGrade },
+                    headers: { Authorization: `Bearer ${token}` }
+                }
+            );
+
+            alert("Grade successfully given!");
+            fetchTaskDetails();
+        } catch (error) {
+            console.error("Error while giving grade:", error);
+            setError("Error while giving grade! Please try again");
         }
     };
 
@@ -93,7 +145,7 @@ const TaskDetailPage = () => {
             <p><strong>📊 Grade:</strong> {task.grade ?? "You have no grade yet"}</p>
 
             <form onSubmit={handleFileUpload} className="file-upload-form">
-                <input type="file" onChange={(e) => setFile(e.target.files[0])}/>
+                <input type="file" onChange={(e) => setFile(e.target.files[0])} />
                 <button type="submit">📤 Upload file</button>
             </form>
 
@@ -102,6 +154,30 @@ const TaskDetailPage = () => {
                     ⬇️ Download file
                 </button>
             )}
+
+            <div className="task-actions">
+                <label>
+                    Change Status:
+                    <select onChange={(e) => setNewStatus(e.target.value)} value={newStatus}>
+                        <option value="">Select status</option>
+                        <option value="PENDING">PENDING</option>
+                        <option value="IN_PROGRESS">IN PROGRESS</option>
+                        <option value="COMPLETED">COMPLETED</option>
+                    </select>
+                </label>
+                <button onClick={handleChangeStatus}>✔️ Update Status</button>
+
+                <label>
+                    Give Grade:
+                    <input
+                        type="number"
+                        value={newGrade}
+                        onChange={(e) => setNewGrade(e.target.value)}
+                        placeholder="Enter grade (0-100)"
+                    />
+                </label>
+                <button onClick={handleGiveGrade}>🏆 Give Grade</button>
+            </div>
         </div>
     );
 };
