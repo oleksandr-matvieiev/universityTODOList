@@ -20,7 +20,7 @@ public class Subject {
     private String name;
 
     private String description;
-    private Integer averageGrade;
+    private Integer averageGrade=0;
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
