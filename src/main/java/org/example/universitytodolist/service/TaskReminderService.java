@@ -1,5 +1,6 @@
 package org.example.universitytodolist.service;
 
+import org.example.universitytodolist.enums.TaskStatus;
 import org.example.universitytodolist.model.Task;
 import org.example.universitytodolist.model.User;
 import org.example.universitytodolist.repository.TaskRepository;
@@ -27,7 +28,7 @@ public class TaskReminderService {
         List<Task> tasks = taskRepository.findAllByDeadLineBetween(LocalDateTime.now(), treeDayLater);
 
         for (Task task : tasks) {
-            if (!task.isReminderSent()) {
+            if (!task.isReminderSent() && task.getStatus() != TaskStatus.COMPLETED) {
                 User user = task.getUser();
                 String subject = "\uD83D\uDD14 Reminder about deadline:" + task.getTitle();
                 String message = "Hi, " + user.getUsername() + "!<br><br>" +
