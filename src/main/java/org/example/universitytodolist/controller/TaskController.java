@@ -75,5 +75,11 @@ public class TaskController {
         return taskService.downloadTaskFile(taskId);
     }
 
+    @DeleteMapping("/deleteTask/{taskId}")
+    public ResponseEntity<Void> deleteTask(@PathVariable("taskId") Long taskId) {
+        taskService.deleteTask(taskId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
 
 }

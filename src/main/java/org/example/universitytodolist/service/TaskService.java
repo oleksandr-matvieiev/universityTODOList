@@ -194,4 +194,12 @@ public class TaskService {
         }
         return taskMapper.toDTO(task);
     }
+
+    public void deleteTask(Long taskId) {
+        User user = authService.getCurrentUser();
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new RuntimeException("Task not found"));
+        if (!task.getUser().equals(user)) throw new RuntimeException("Wrong user");
+        taskRepository.delete(task);
+    }
 }
