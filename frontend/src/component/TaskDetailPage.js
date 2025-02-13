@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import {useEffect, useState} from "react";
+import {useNavigate, useParams} from "react-router-dom";
 import axios from "axios";
 import NavigationMenu from "./NavigationMenu";
 
 const TaskDetailPage = () => {
-    const { taskId } = useParams();
+    const {taskId} = useParams();
+    const navigate = useNavigate();
     const [task, setTask] = useState(null);
     const [error, setError] = useState(null);
     const [file, setFile] = useState(null);
@@ -25,7 +26,7 @@ const TaskDetailPage = () => {
 
         try {
             const response = await axios.get(`http://localhost:8080/api/task/${taskId}`, {
-                headers: { Authorization: `Bearer ${token}` }
+                headers: {Authorization: `Bearer ${token}`}
             });
 
             setTask(response.data);
@@ -66,7 +67,7 @@ const TaskDetailPage = () => {
         try {
             const token = localStorage.getItem("token");
             const response = await axios.get(`http://localhost:8080/api/task/${taskId}/download`, {
-                headers: { Authorization: `Bearer ${token}` },
+                headers: {Authorization: `Bearer ${token}`},
                 responseType: "blob"
             });
 
@@ -94,8 +95,8 @@ const TaskDetailPage = () => {
                 `http://localhost:8080/api/task/changeStatus/${taskId}`,
                 null,
                 {
-                    params: { taskStatus: newStatus },
-                    headers: { Authorization: `Bearer ${token}` }
+                    params: {taskStatus: newStatus},
+                    headers: {Authorization: `Bearer ${token}`}
                 }
             );
 
@@ -119,8 +120,8 @@ const TaskDetailPage = () => {
                 `http://localhost:8080/api/task/giveGrade/${taskId}`,
                 null,
                 {
-                    params: { grade: newGrade },
-                    headers: { Authorization: `Bearer ${token}` }
+                    params: {grade: newGrade},
+                    headers: {Authorization: `Bearer ${token}`}
                 }
             );
 
@@ -131,13 +132,31 @@ const TaskDetailPage = () => {
             setError("Error while giving grade! Please try again");
         }
     };
+    const handleDeleteTask = async () => {
+        const confirmed = window.confirm("Are you sure you want to delete this task?");
+        if (!confirmed) return;
+
+        try {
+            const token = localStorage.getItem("token");
+            await axios.delete(`http://localhost:8080/api/task/deleteTask/${taskId}`, {
+                headers: {Authorization: `Bearer ${token}`}
+            });
+
+            alert("Task successfully deleted!");
+            navigate("/dashboard");
+        }catch (error){
+            console.error("Error while deleting task:", error);
+            setError("Error while deleting task! Please try again");
+        }
+    };
+
 
     if (error) return <p className="error">{error}</p>;
     if (!task) return <p>Loading...</p>;
 
     return (
         <div className="task-detail-container">
-            <NavigationMenu />
+            <NavigationMenu/>
             <h2>📌 {task.title}</h2>
             <p><strong>📖 Description:</strong> {task.description}</p>
             <p><strong>📅 Deadline:</strong> {task.deadLine ?? "No"}</p>
@@ -145,7 +164,7 @@ const TaskDetailPage = () => {
             <p><strong>📊 Grade:</strong> {task.grade ?? "You have no grade yet"}</p>
 
             <form onSubmit={handleFileUpload} className="file-upload-form">
-                <input type="file" onChange={(e) => setFile(e.target.files[0])} />
+                <input type="file" onChange={(e) => setFile(e.target.files[0])}/>
                 <button type="submit">📤 Upload file</button>
             </form>
 
@@ -178,6 +197,10 @@ const TaskDetailPage = () => {
                 </label>
                 <button onClick={handleGiveGrade}>🏆 Give Grade</button>
             </div>
+            <button onClick={handleDeleteTask} className="delete-btn"
+                    style={{backgroundColor: "red", color: "white", marginTop: "20px"}}>
+                🗑️ Delete Task
+            </button>
         </div>
     );
 };
